@@ -1,7 +1,10 @@
 import time
 import os
+import re
+import pandas as pd
 
-path = os.getcwd() + '/inputs/'
+#path = os.getcwd() + '/inputs/'
+path =  'inputs/'
 filename = 'input-dec1.txt'
 
 with open(path + filename) as f:
@@ -94,3 +97,57 @@ for row in content:
 
 print('total sum:', sum)
 print("--- %s seconds ---" % (time.time() - start_time))
+
+
+
+
+exit()
+
+def main():
+    inp = read_input()
+    start_time = time.time()
+    array_of_nums = []
+    for _, row in inp.iterrows():
+        numbers = _extract_nums(row["line"])
+        (first, last) = _extract_first_last(numbers)
+        array_of_nums.append(int(first + last))
+    res = sum(array_of_nums)
+    print(res)
+    print("--- %s seconds ---" % (time.time() - start_time))    
+    return res
+
+
+def read_input():
+    inp = pd.read_csv("inputs/input-dec1.txt", delimiter=" ", header=None, names=["line"])
+    return inp
+
+
+def _find_numbers(row):
+    letter_to_dig_dict = {
+        "one": "on1e",
+        "two": "tw2o",
+        "three": "thr3ee",
+        "four": "fo4ur",
+        "five": "fi5ve",
+        "six": "si6x",
+        "seven": "sev7en",
+        "eight": "eig8ht",
+        "nine": "ni9ne",
+    }
+    for number in letter_to_dig_dict.keys():
+        row = row.replace(number, letter_to_dig_dict[number])
+    return row
+
+
+def _extract_nums(row):
+    row_with_numbers = _find_numbers(row)
+    return re.sub("[a-z]", "", row_with_numbers)
+
+
+def _extract_first_last(numbers):
+    first = numbers[0]
+    last = numbers[-1]
+    return (first, last)
+
+
+main()
